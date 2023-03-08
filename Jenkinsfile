@@ -46,13 +46,13 @@ pipeline{
                 script{
                    withCredentials([string(credentialsId: 'nexus_passwd', variable: 'nexus_creds')]) {
                     sh '''
-                     docker build -t 3.83.66.55:8083/springapp:${VERSION} .
+                     docker build -t 192.168.29.148:8083/springapp:${VERSION} .
 
-                     docker login -u admin -p $nexus_creds 3.83.66.55:8083
+                     docker login -u admin -p $nexus_creds 192.168.29.148:8083
 
-                     docker push 3.83.66.55:8083/springapp:${VERSION}
+                     docker push 192.168.29.148:8083/springapp:${VERSION}
 
-                     docker rmi  3.83.66.55:8083/springapp:${VERSION}
+                     docker rmi  192.168.29.148:8083/springapp:${VERSION}
 
                     '''
                    }
@@ -64,7 +64,7 @@ pipeline{
             steps{
                 script{
                     dir('kubernetes/myapp/') {
-                         withEnv(['DATREE_TOKEN=b73821a0-0227-4d1e-8e00-e328668442a1']) {
+                         withEnv(['DATREE_TOKEN=dfe02bbf-60d1-43b8-8614-b6a886b98be4']) {
                         sh 'helm datree test .'
                         }
                     }
@@ -80,7 +80,7 @@ pipeline{
                          sh '''
                          helmversion=$(helm show chart myapp | grep version | cut -d: -f 2 | tr -d ' ')
                          tar -czvf myapp-${helmversion}.tgz myapp/
-                         curl -u admin:$nexus_creds http://3.83.66.55:8081/repository/helm-repo/ --upload-file myapp-${helmversion}.tgz -v 
+                         curl -u admin:$nexus_creds http://192.168.29.148:8081/repository/helm-repo/ --upload-file myapp-${helmversion}.tgz -v 
                          '''
                 }
               }
@@ -90,7 +90,7 @@ pipeline{
     }
     post {
 		always {
-			mail bcc: '', body: "<br>Project: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER} <br> URL de build: ${env.BUILD_URL}", cc: '', charset: 'UTF-8', from: '', mimeType: 'text/html', replyTo: '', subject: "${currentBuild.result} CI: Project name -> ${env.JOB_NAME}", to: "vikash.mrdevops@gmail.com";  
+			mail bcc: '', body: "<br>Project: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER} <br> URL de build: ${env.BUILD_URL}", cc: '', charset: 'UTF-8', from: '', mimeType: 'text/html', replyTo: '', subject: "${currentBuild.result} CI: Project name -> ${env.JOB_NAME}", to: "harishnarnaware75@gmai.com";  
 		}
 	}
 }
